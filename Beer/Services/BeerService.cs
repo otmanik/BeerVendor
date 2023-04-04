@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BeerVendor.Models;
 using BeerVendor.Data.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace BeerVendor.Services
 {
@@ -23,6 +24,18 @@ namespace BeerVendor.Services
             return await _repository.GetByIdAsync(id);
         }
 
+        public async Task DeleteBeerAsync(int beerId)
+        {
+            var beer = await _repository.GetByIdAsync(beerId);
+
+            if (beer == null)
+            {
+                throw new ArgumentException("Beer not found.");
+            }
+
+            await _repository.DeleteAsync(beerId);
+        }
+
         public async Task AddBeerAsync(Beer beer)
         {
             await _repository.AddAsync(beer);
@@ -43,16 +56,6 @@ namespace BeerVendor.Services
             await _repository.UpdateAsync(existingBeer);
         }
 
-        public async Task DeleteBeerAsync(int id)
-        {
-            var existingBeer = await _repository.GetByIdAsync(id);
-
-            if (existingBeer == null)
-            {
-                throw new ArgumentException("Beer not found");
-            }
-
-            await _repository.DeleteAsync(existingBeer.Id);
-        }
+        
     }
 }

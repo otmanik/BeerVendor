@@ -1,9 +1,9 @@
 ﻿namespace BeerVendor.Models
 {
-    public class Wholesaler
+    public class Brewery
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public ICollection<WholesalerStock> Stocks { get; set; }
+        public ICollection<Beer> Beers { get; set; }
     }
 }

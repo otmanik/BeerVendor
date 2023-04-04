@@ -14,12 +14,12 @@ namespace BeerVendor.Data.Repositories
 
         public async Task<List<Beer>> GetAllAsync()
         {
-            return await _context.Beers.Include(b => b.Vendor).ToListAsync();
+            return await _context.Beers.Include(b => b.Brewery).ToListAsync();
         }
 
         public async Task<Beer> GetByIdAsync(int id)
         {
-            return await _context.Beers.Include(b => b.Vendor).FirstOrDefaultAsync(b => b.Id == id);
+            return await _context.Beers.FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task AddAsync(Beer beer)
@@ -38,6 +38,11 @@ namespace BeerVendor.Data.Repositories
         {
             var beer = await _context.Beers.FindAsync(id);
             _context.Beers.Remove(beer);
+            await _context.SaveChangesAsync();
+        }
+        public async Task AddWholesalerStock(WholesalerStock stock)
+        {
+            await _context.WholesalerStocks.AddAsync(stock);
             await _context.SaveChangesAsync();
         }
     }
