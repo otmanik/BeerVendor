@@ -6,10 +6,10 @@ namespace BeerVendor.Controllers
 {
     public class WholesalerController : Controller
     {
-        private readonly WholesalerStockService _wholesalerService;
-        private readonly BeerService _BeerService;
+        private readonly IWholesalerStockService _wholesalerService;
+        private readonly IBeerService _BeerService;
 
-        public WholesalerController(WholesalerStockService wholesalerService, BeerService beerService)
+        public WholesalerController(IWholesalerStockService wholesalerService, IBeerService beerService)
         {
             _wholesalerService = wholesalerService;
             _BeerService = beerService;
@@ -32,12 +32,12 @@ namespace BeerVendor.Controllers
             }
         }
 
-        [HttpPost("{wholesalerId}/quote")]
-        public async Task<ActionResult<QuoteDto>> RequestQuote(int wholesalerId, [FromBody] QuoteRequestDto quoteRequestDto)
+        [HttpPost("quote")]
+        public async Task<ActionResult<QuoteDto>> RequestQuote([FromBody] QuoteRequestDto quoteRequestDto)
         {
             try
             {
-                var quoteDto = await _wholesalerService.RequestQuoteAsync(wholesalerId, quoteRequestDto);
+                var quoteDto = await _wholesalerService.RequestQuoteAsync(quoteRequestDto.WholesalerId, quoteRequestDto);
                 return Ok(quoteDto);
             }
             catch (ArgumentException ex)

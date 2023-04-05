@@ -31,5 +31,14 @@ namespace BeerVendor.Data.Repositories
         {
             return await _context.WholesalerStocks.FirstOrDefaultAsync(b => b.BeerId == beerId && b.WholesalerId == wholesalerId);
         }
+
+        public async Task UpdateAsync(WholesalerStock WholesalerStock)
+        {
+            var existingWholesalerStock = await _context.WholesalerStocks
+        .FindAsync(WholesalerStock.WholesalerId, WholesalerStock.BeerId);
+            if (existingWholesalerStock != null)
+            existingWholesalerStock.Quantity = WholesalerStock.Quantity;
+            await _context.SaveChangesAsync();
+        }
     }
 }

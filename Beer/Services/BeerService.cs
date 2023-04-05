@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeerVendor.Services
 {
-    public class BeerService
+    public class BeerService: IBeerService
     {
         private readonly IBeerRepository _repository;
 

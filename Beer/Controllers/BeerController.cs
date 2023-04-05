@@ -6,21 +6,21 @@ namespace BeerVendor.Controllers
 {
     public class BeerController : Controller
     {
-        private readonly BeerService _service;
+        private readonly IBeerService _service;
 
-        public BeerController(BeerService service)
+        public BeerController(IBeerService service)
         {
             _service = service;
         }
 
-        [HttpGet]
+        [HttpGet("GetAllBeersAsync")]
         public async Task<ActionResult<List<Beer>>> GetAllBeersAsync()
         {
             var beers = await _service.GetAllBeersAsync();
             return Ok(beers);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetBeerByIdAsync/{id}")]
         public async Task<ActionResult<Beer>> GetBeerByIdAsync(int id)
         {
             var beer = await _service.GetBeerByIdAsync(id);
@@ -33,14 +33,14 @@ namespace BeerVendor.Controllers
             return Ok(beer);
         }
 
-        [HttpPost]
+        [HttpPost("AddBeerAsync")]
         public async Task<IActionResult> AddBeerAsync([FromBody] Beer beer)
         {
             await _service.AddBeerAsync(beer);
             return CreatedAtAction(nameof(GetBeerByIdAsync), new { id = beer.Id }, beer);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("UpdateBeerAsync/{id}")]
         public async Task<IActionResult> UpdateBeerAsync(int id, [FromBody] Beer beer)
         {
             try
@@ -54,7 +54,7 @@ namespace BeerVendor.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteBeerAsync/{id}")]
         public async Task<IActionResult> DeleteBeerAsync(int id)
         {
             try

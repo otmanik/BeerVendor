@@ -37,6 +37,7 @@ namespace BeerVendor.Data.Repositories
         public async Task DeleteAsync(int id)
         {
             var beer = await _context.Beers.FindAsync(id);
+            if (beer != null)
             _context.Beers.Remove(beer);
             await _context.SaveChangesAsync();
         }

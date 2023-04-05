@@ -1,9 +1,10 @@
 ﻿using BeerVendor.Data.Repositories;
 using BeerVendor.Models;
+using System;
 
 namespace BeerVendor.Services
 {
-    public class WholesalerStockService
+    public class WholesalerStockService : IWholesalerStockService
     {
         private readonly IWholesalerRepository _wholesalerRepository;
         private readonly IBeerRepository _beerRepository;
@@ -36,8 +37,21 @@ namespace BeerVendor.Services
                 BeerId = beerId,
                 Quantity = quantity,
             };
-
-            await _wholesalerRepository.AddAsync(sale);
+            try
+            {
+                if (stock != null)
+                {
+                    await _wholesalerRepository.UpdateAsync(sale);
+                }
+                else
+                {
+                    await _wholesalerRepository.AddAsync(sale);
+                }
+            }
+            catch(Exception ex)
+            {
+                throw new ArgumentException(ex.Message);
+            }
 
         }
 
@@ -55,7 +69,6 @@ namespace BeerVendor.Services
                 throw new ArgumentException("The wholesaler must exist");
             }
 
-
             var beers = await _beerRepository.GetAllAsync();
 
             if (quoteRequestDto.Quantity > wholesaler.Stocks?.Where(b => b.BeerId == quoteRequestDto.BeerId)?.FirstOrDefault()?.Quantity)
@@ -69,7 +82,7 @@ namespace BeerVendor.Services
                 var beer = beers.FirstOrDefault(b => b.Id == quoteRequestDto.BeerId);
                 if (beer != null)
                 {
-                    var beerPrice = beer.Price * quoteRequestDto.Quantity;
+                    quotePrice = (double)(beer.Price * quoteRequestDto.Quantity);
                     if (quoteRequestDto.Quantity > 20)
                     {
                     quotePrice *= 0.8; // 20% discount
@@ -78,7 +91,7 @@ namespace BeerVendor.Services
                     {
                     quotePrice *= 0.9; // 10% discount
                     }
-                 summary = $"{quoteRequestDto.Quantity} x {beer.Name}: {beerPrice:0.00}";
+                 summary = $"{quoteRequestDto.Quantity} x {beer.Name}: {quotePrice:0.00}";
                 }
 
             return new QuoteDto
